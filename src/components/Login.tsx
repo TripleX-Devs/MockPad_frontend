@@ -1,26 +1,78 @@
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { BookOpen, GraduationCap } from 'lucide-react'
+import { useState } from "react";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/Components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
+import { BookOpen, Cookie, GraduationCap } from "lucide-react";
+
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { teacherLogin } from "@/StateManagement/Authentication/action";
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import Cookies from "js-cookie";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
 
-  const handleSubmit = (event: React.FormEvent, role: 'student' | 'teacher') => {
-    event.preventDefault()
-    // Here you would typically handle the login logic
-    console.log(`Logging in as ${role} with email: ${email}`)
-  }
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const navigate=useNavigate();
+  const dispatch=useDispatch();
+  const loginError = useSelector((state: any) => state.auth.error);
+
+  useEffect(()=>{
+    if (loginError) {
+      toast.error(loginError);
+    }
+  },[loginError]);
+
+  const handleSubmit = (
+    event: React.FormEvent,
+    role: "student" | "teacher"
+  ) => {
+    event.preventDefault();
+    const userData={
+      universityEmail:email,
+      universityEmailPassword:password,
+      
+    }
+
+    // @ts-ignore
+     dispatch(teacherLogin(userData,role,navigate));
+    // console.log("Login Data",userData);
+
+   
+   
+   
+  };
+
+  
+
+
+
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
+       <ToastContainer />
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Welcome Back!</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">
+            Welcome Back!
+          </CardTitle>
           <CardDescription className="text-center">
             Sign in to access your account
           </CardDescription>
@@ -38,58 +90,62 @@ export default function LoginPage() {
               </TabsTrigger>
             </TabsList>
             <TabsContent value="student">
-              <form onSubmit={(e) => handleSubmit(e, 'student')}>
+              <form onSubmit={(e) => handleSubmit(e, "student")}>
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="student-email">Email</Label>
-                    <Input 
-                      id="student-email" 
-                      type="email" 
-                      placeholder="student@school.edu" 
+                    <Input
+                      id="student-email"
+                      type="email"
+                      placeholder="student@school.edu"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      required 
+                      required
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="student-password">Password</Label>
-                    <Input 
-                      id="student-password" 
-                      type="password" 
+                    <Input
+                      id="student-password"
+                      type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      required 
+                      required
                     />
                   </div>
-                  <Button type="submit" className="w-full">Sign In as Student</Button>
+                  <Button type="submit" className="w-full">
+                    Sign In as Student
+                  </Button>
                 </div>
               </form>
             </TabsContent>
             <TabsContent value="teacher">
-              <form onSubmit={(e) => handleSubmit(e, 'teacher')}>
+              <form onSubmit={(e) => handleSubmit(e, "teacher")}>
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="teacher-email">Email</Label>
-                    <Input 
-                      id="teacher-email" 
-                      type="email" 
-                      placeholder="teacher@school.edu" 
+                    <Input
+                      id="teacher-email"
+                      type="email"
+                      placeholder="teacher@school.edu"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      required 
+                      required
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="teacher-password">Password</Label>
-                    <Input 
-                      id="teacher-password" 
-                      type="password" 
+                    <Input
+                      id="teacher-password"
+                      type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      required 
+                      required
                     />
                   </div>
-                  <Button type="submit" className="w-full">Sign In as Teacher</Button>
+                  <Button type="submit" className="w-full">
+                    Sign In as Teacher
+                  </Button>
                 </div>
               </form>
             </TabsContent>
@@ -102,6 +158,5 @@ export default function LoginPage() {
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }
-
